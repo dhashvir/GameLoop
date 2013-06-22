@@ -15,19 +15,19 @@
         };
     }
     
-    function ParticleEmitter(){
-        var pariclePool = [];
-        var maxParticles = 10;
-        var xVariance = 10;
-        var yVariance = 10;
-        var emmitedParticles = 0;
-        var i;
-        var vx = Math.random();
-        var vy = Math.random();
-        
-        for (i = 0; i < maxParticles; ++i){            
-            pariclePool[i] = new Particle();
-        }
-               
+    function ParticleEmitter() {
+      var pariclePool = [];
+      var maxParticles = 10;
+      var xVariance = 10;
+      var yVariance = 10;
+      var emmitedParticles = 0;
+      var i;
+      var vx = Math.random();
+      var vy = Math.random();
+
+      for (i = 0; i < maxParticles; ++i) {
+        pariclePool[i] = new Particle();
+      }
+    }
     
 }(window));

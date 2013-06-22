@@ -42,11 +42,14 @@
         };
     }
     
-    gameLoopEvent = new global.CustomEvent(gameLoopEventName, { detail: { message: 'Update', time: 0 }, bubbles: false, cancelable: false });
-    gameLoopFunc = function () {
+    gameLoopEvent = document.createEvent('Event');
+    gameLoopEvent.initEvent(gameLoopEventName, false, false);
+	gameLoopEvent.detail = {};
+    gameLoopFunc = function () {	
         reqAnimFunc(gameLoopFunc);
-        gameLoopEvent.detail.time = dateFunc();
+        gameLoopEvent.detail.time = dateFunc();		
         global.document.dispatchEvent(gameLoopEvent);
+		console.log(gameLoopEvent.detail.time );
     };
     
     gameLoopFunc(); // Kickstart gameloop
