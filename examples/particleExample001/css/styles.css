@@ -1,0 +1,13 @@
+.main-area {
+    position:absolute;
+    width: 800px;
+    height: 600px;
+    background-color: black;
+}
+
+.particle-div{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background-color: white;
+}
