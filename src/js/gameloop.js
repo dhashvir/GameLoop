@@ -1,40 +1,54 @@
-(function() {
+(function (global) {
     'use strict';
     var lastTime = 0,
         vendors = ['ms', 'moz', 'webkit', 'o'],
         currTime,
         timeToCall,
         id,
-        x, 
-        gameLoopFunc;
+        i,
+        reqAnimFunc,
+        cancelReqAnimFunc,
+        dateFunc,
+        gameLoopFunc,
+        gameLoopEvent,
+        gameLoopEventName = global.GameLoopEventName || 'GameLoopUpdate';
     
-    for (x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-        window.cancelRequestAnimationFrame = window[vendors[x] + 'CancelRequestAnimationFrame'];
+    reqAnimFunc = global.requestAnimationFrame;
+    cancelReqAnimFunc = global.cancelAnimationFrame;
+    i = 0;
+    while (i < vendors.length && !reqAnimFunc) {
+        reqAnimFunc = global[vendors[i] + 'RequestAnimationFrame'];
+        cancelReqAnimFunc = global[vendors[i] + 'CancelRequestAnimationFrame'];
+        i += 1;
     }
-
-    if (!window.requestAnimationFrame)
-        window.requestAnimationFrame = function(callback, element) {
-            currTime = new Date().getTime();            
-            timeToCall = Math.max(0, 16 - (currTime - lastTime));            
-            id = window.setTimeout(
-                function() { 
-                    callback(currTime + timeToCall); 
-                },
-                timeToCall);            
+    dateFunc = global.Date.now;
+    if (!dateFunc) {
+        dateFunc = function () {
+            return (new global.Date().getTime());
+        };
+    }
+    if (!reqAnimFunc) {
+        reqAnimFunc = function (callback, element) {
+            currTime = dateFunc();
+            timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            id = global.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
             lastTime = currTime + timeToCall;
             return id;
         };
-
-    if (!window.cancelAnimationFrame)
-        window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-        };		
-        
-    gameLoopFunc = function(){
-        window.requestAnimationFrame(gameLoopFunc);
-        console.log('gameloop');
+    }
+    if (!cancelReqAnimFunc) {
+        cancelReqAnimFunc = function (id) {
+            global.clearTimeout(id);
+        };
+    }
+    
+    gameLoopEvent = new global.CustomEvent(gameLoopEventName, { detail: { message: 'Update', time: 0 }, bubbles: false, cancelable: false });
+    gameLoopFunc = function () {
+        reqAnimFunc(gameLoopFunc);
+        gameLoopEvent.detail.time = dateFunc();
+        global.document.dispatchEvent(gameLoopEvent);
     };
     
-    gameLoopFunc();
-}());
+    gameLoopFunc(); // Kickstart gameloop
+    
+}(window));
