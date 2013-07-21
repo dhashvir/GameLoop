@@ -44,12 +44,17 @@
     
     gameLoopEvent = document.createEvent('Event');
     gameLoopEvent.initEvent(gameLoopEventName, false, false);
-	gameLoopEvent.detail = {};
+	gameLoopEvent.detail = {
+        time: dateFunc(),
+        timeElapsed: 0
+    };
     gameLoopFunc = function () {	
         reqAnimFunc(gameLoopFunc);
-        gameLoopEvent.detail.time = dateFunc();		
+        var prevTime =  gameLoopEvent.detail.time;
+        gameLoopEvent.detail.time = dateFunc();
+        gameLoopEvent.detail.timeElapsed =  gameLoopEvent.detail.time - prevTime;
         global.document.dispatchEvent(gameLoopEvent);
-		console.log(gameLoopEvent.detail.time );
+	//	console.log(gameLoopEvent.detail.time );
     };
     
     gameLoopFunc(); // Kickstart gameloop
